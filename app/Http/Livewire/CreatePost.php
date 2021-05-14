@@ -2,8 +2,9 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Post;
 use Livewire\Component;
-
+use Illuminate\Support\Str;
 class CreatePost extends Component
 {
     public $title, $body;
@@ -14,11 +15,17 @@ class CreatePost extends Component
     ];
     public function render()
     {
-        return view('livewire.create-post');
+        return view('livewire.create-post')->extends('layouts.app')
+        ->section('content');
     }
     public function create(){
         $this->validate();
-
+        Post::create([
+            'title' => $this->title,
+            'slug' => Str::slug($this->title),
+            'body' => $this->body,
+            'author_id' => auth()->id()
+        ]);
         $this->success = true;
     }
 }
